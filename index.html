@@ -271,7 +271,7 @@ function fmtDist(km) { return km < 1 ? Math.round(km*1000) + ' m' : km.toFixed(1
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 // ── GPS ────────────────────────────────────────────────────────────────────────
-var GPS_INTERVAL = 5 * 60 * 1000; // 5 minutes
+var GPS_INTERVAL = 15 * 60 * 1000; // 15 minutes
 var lastGPSUpdate = 0;
 var lastUpdateTime = null;
 
