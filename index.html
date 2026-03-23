@@ -111,6 +111,8 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .tag-pub0 { background: rgba(100,116,139,.1); color: #94a3b8; border: 1px solid rgba(100,116,139,.2); }
 .btn-delete { background: transparent; border: none; color: rgba(255,255,255,.25); font-size: 13px; cursor: pointer; padding: 2px 4px; line-height: 1; transition: color .15s; font-weight: 600; }
 .btn-delete:active { color: var(--red); }
+.btn-maps { background: transparent; border: none; font-size: 15px; cursor: pointer; padding: 2px 4px; line-height: 1; opacity: .6; transition: opacity .15s; }
+.btn-maps:active { opacity: 1; }
 .btn-small { margin-top: 12px; width: 100%; padding: 10px; background: rgba(255,255,255,.05); color: rgba(255,255,255,.5); border: 1px solid rgba(255,255,255,.1); border-radius: 10px; font-size: 13px; font-family: 'Inter', sans-serif; font-weight: 600; cursor: pointer; transition: all .15s; -webkit-appearance: none; }
 .btn-small.highlight { background: linear-gradient(135deg, rgba(34,211,238,.25), rgba(59,130,246,.3)); color: #fff; border-color: rgba(34,211,238,.4); box-shadow: 0 3px 10px rgba(34,211,238,.2); }
 .list-item-av .btn-small.highlight { background: linear-gradient(135deg, rgba(236,72,153,.3), rgba(239,68,68,.25)); border-color: rgba(236,72,153,.45); box-shadow: 0 3px 10px rgba(236,72,153,.2); }
@@ -497,6 +499,7 @@ function renderField(body) {
     (groupLabel ? '<div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:10px;font-family:\'JetBrains Mono\',monospace">📦 ' + groupLabel + '</div>' : '') +
     '<div class="nearest-dist">' + dv + '<span>' + du + '</span></div>' +
     '<button class="btn-visit" onclick="markVisited(' + nearest.id + ')">✓ Marcar como visitada</button>' +
+    '<button onclick="openInMaps(' + nearest.lat + ',' + nearest.lon + ',\'' + esc(nearest.address||nearest.name) + '\')" style="width:100%;margin-top:8px;padding:10px;background:transparent;border:1px solid rgba(255,255,255,.1);border-radius:12px;color:rgba(255,255,255,.5);font-size:13px;font-family:\'Inter\',sans-serif;cursor:pointer;">🗺 Abrir en Google Maps</button>' +
     (ready.length > 1 ? '<div class="remaining-hint">' + (ready.length-1) + ' pendiente' + (ready.length-1>1?'s':'') + ' después</div>' : '');
   body.appendChild(nc);
   var nextItems = ready.filter(function(l) { return l.id !== nearest.id; })
@@ -569,12 +572,27 @@ function renderList(body) {
             (manVal !== null ? '<span class="tag tag-man">M' + esc(manVal) + '</span>' : '') +
             (pubVal !== null ? '<span class="tag ' + (pubVal===1?'tag-pub1':'tag-pub0') + '">P' + pubVal + '</span>' : '') +
           '</div>' +
-          '<button class="btn-delete" onclick="deleteLocation(' + loc.id + ')">✕</button>' +
+          '<div style="display:flex;gap:6px;align-items:center">' +
+            '<button class="btn-maps" onclick="openInMaps(' + loc.lat + ',' + loc.lon + ',\'' + esc(loc.address||loc.name) + '\')">🗺</button>' +
+            '<button class="btn-delete" onclick="deleteLocation(' + loc.id + ')">✕</button>' +
+          '</div>' +
         '</div>' +
       '</div>' +
       (loc.status === 'ready' ? '<button class="btn-small' + (isNearest?' highlight':'') + '" onclick="markVisited(' + loc.id + ')">✓ Visitada</button>' : '');
     body.appendChild(item);
   });
+}
+
+// ── Google Maps ────────────────────────────────────────────────────────────────
+function openInMaps(lat, lon, address) {
+  var url;
+  if (lat != null && lon != null) {
+    // coords → opens navigation directly
+    url = 'https://www.google.com/maps/dir/?api=1&destination=' + lat + ',' + lon;
+  } else {
+    url = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(address);
+  }
+  window.open(url, '_blank');
 }
 
 // ── Geocoding ──────────────────────────────────────────────────────────────────
