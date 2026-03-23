@@ -111,8 +111,6 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .tag-pub0 { background: rgba(100,116,139,.1); color: #94a3b8; border: 1px solid rgba(100,116,139,.2); }
 .btn-delete { background: transparent; border: none; color: rgba(255,255,255,.25); font-size: 13px; cursor: pointer; padding: 2px 4px; line-height: 1; transition: color .15s; font-weight: 600; }
 .btn-delete:active { color: var(--red); }
-.btn-maps { background: rgba(59,130,246,.15); border: 1px solid rgba(59,130,246,.3); color: var(--blue-bright); font-size: 10px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; padding: 3px 7px; border-radius: 6px; line-height: 1.4; transition: background .15s; letter-spacing: .03em; }
-.btn-maps:active { background: rgba(59,130,246,.3); }
 .btn-small { margin-top: 12px; width: 100%; padding: 10px; background: rgba(255,255,255,.05); color: rgba(255,255,255,.5); border: 1px solid rgba(255,255,255,.1); border-radius: 10px; font-size: 13px; font-family: 'Inter', sans-serif; font-weight: 600; cursor: pointer; transition: all .15s; -webkit-appearance: none; }
 .btn-small.highlight { background: linear-gradient(135deg, rgba(34,211,238,.25), rgba(59,130,246,.3)); color: #fff; border-color: rgba(34,211,238,.4); box-shadow: 0 3px 10px rgba(34,211,238,.2); }
 .list-item-av .btn-small.highlight { background: linear-gradient(135deg, rgba(236,72,153,.3), rgba(239,68,68,.25)); border-color: rgba(236,72,153,.45); box-shadow: 0 3px 10px rgba(236,72,153,.2); }
@@ -495,11 +493,10 @@ function renderField(body) {
 
   nc.innerHTML =
     '<div class="nearest-top"><div class="nearest-label">Más cercana</div><span class="type-pill ' + (isAV?'av':'rv') + '">' + (nearest.type||'RV') + '</span></div>' +
-    '<div class="nearest-name">' + esc(nearest.name || nearest.address) + '</div>' +
+    '<div class="nearest-name" onclick="openInMaps(' + nearest.lat + ',' + nearest.lon + ',\'' + esc(nearest.address||nearest.name) + '\')" style="cursor:pointer;text-decoration:underline;text-decoration-color:rgba(255,255,255,.2);text-underline-offset:4px">' + esc(nearest.name || nearest.address) + '</div>' +
     (groupLabel ? '<div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:10px;font-family:\'JetBrains Mono\',monospace">📦 ' + groupLabel + '</div>' : '') +
     '<div class="nearest-dist">' + dv + '<span>' + du + '</span></div>' +
     '<button class="btn-visit" onclick="markVisited(' + nearest.id + ')">✓ Marcar como visitada</button>' +
-    '<button onclick="openInMaps(' + nearest.lat + ',' + nearest.lon + ',\'' + esc(nearest.address||nearest.name) + '\')" style="width:100%;margin-top:8px;padding:11px;background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.25);border-radius:12px;color:var(--blue-bright);font-size:13px;font-weight:600;font-family:\'Inter\',sans-serif;cursor:pointer;letter-spacing:.01em">Abrir en Google Maps</button>' +
     (ready.length > 1 ? '<div class="remaining-hint">' + (ready.length-1) + ' pendiente' + (ready.length-1>1?'s':'') + ' después</div>' : '');
   body.appendChild(nc);
   var nextItems = ready.filter(function(l) { return l.id !== nearest.id; })
@@ -563,7 +560,7 @@ function renderList(body) {
     var pubVal = loc.public != null && loc.public !== '' ? parseInt(loc.public) : null;
     item.innerHTML =
       '<div class="list-main">' +
-        '<div class="list-addr-text">' + esc(loc.name || loc.address) + '</div>' +
+        '<div class="list-addr-text" onclick="openInMaps(' + loc.lat + ',' + loc.lon + ',\'' + esc(loc.address||loc.name) + '\')" style="cursor:pointer;text-decoration:underline;text-decoration-color:rgba(255,255,255,.2);text-underline-offset:3px">' + esc(loc.name || loc.address) + '</div>' +
         '<div class="list-right">' +
           (dist !== null ? '<div class="list-dist">' + fmtDist(dist) + '</div>' : '') +
           '<div class="tags-row">' +
@@ -572,10 +569,7 @@ function renderList(body) {
             (manVal !== null ? '<span class="tag tag-man">M' + esc(manVal) + '</span>' : '') +
             (pubVal !== null ? '<span class="tag ' + (pubVal===1?'tag-pub1':'tag-pub0') + '">P' + pubVal + '</span>' : '') +
           '</div>' +
-          '<div style="display:flex;gap:6px;align-items:center">' +
-            '<button class="btn-maps" onclick="openInMaps(' + loc.lat + ',' + loc.lon + ',\'' + esc(loc.address||loc.name) + '\')">Maps</button>' +
-            '<button class="btn-delete" onclick="deleteLocation(' + loc.id + ')">✕</button>' +
-          '</div>' +
+          '<button class="btn-delete" onclick="deleteLocation(' + loc.id + ')">✕</button>' +
         '</div>' +
       '</div>' +
       (loc.status === 'ready' ? '<button class="btn-small' + (isNearest?' highlight':'') + '" onclick="markVisited(' + loc.id + ')">✓ Visitada</button>' : '');
