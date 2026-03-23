@@ -493,7 +493,7 @@ function renderField(body) {
 
   nc.innerHTML =
     '<div class="nearest-top"><div class="nearest-label">Más cercana</div><span class="type-pill ' + (isAV?'av':'rv') + '">' + (nearest.type||'RV') + '</span></div>' +
-    '<div class="nearest-name" onclick="openInMaps(' + nearest.lat + ',' + nearest.lon + ',\'' + esc(nearest.address||nearest.name) + '\')" style="cursor:pointer;text-decoration:underline;text-decoration-color:rgba(255,255,255,.2);text-underline-offset:4px">' + esc(nearest.name || nearest.address) + '</div>' +
+    '<div class="nearest-name" onclick="openInMaps(' + nearest.lat + ',' + nearest.lon + ',\'' + esc(nearest.address||nearest.name) + '\')" style="cursor:pointer">' + esc(nearest.name || nearest.address) + '</div>' +
     (groupLabel ? '<div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:10px;font-family:\'JetBrains Mono\',monospace">📦 ' + groupLabel + '</div>' : '') +
     '<div class="nearest-dist">' + dv + '<span>' + du + '</span></div>' +
     '<button class="btn-visit" onclick="markVisited(' + nearest.id + ')">✓ Marcar como visitada</button>' +
@@ -513,7 +513,7 @@ function renderField(body) {
     nextItems.forEach(function(loc) {
       var el = document.createElement('div');
       el.className = 'next-item ' + (loc.type==='AV'?'av':'rv');
-      el.innerHTML = '<div class="next-item-left"><div class="next-type-dot ' + (loc.type==='AV'?'av':'rv') + '"></div><div class="next-item-name">' + esc(loc.name||loc.address) + '</div></div><div class="next-item-dist">' + fmtDist(loc.dist) + '</div>';
+      el.innerHTML = '<div class="next-item-left"><div class="next-type-dot ' + (loc.type==='AV'?'av':'rv') + '"></div><div class="next-item-name" onclick="openInMaps(' + loc.lat + ',' + loc.lon + ',\'' + esc(loc.address||loc.name) + '\')" style="cursor:pointer">' + esc(loc.name||loc.address) + '</div></div><div class="next-item-dist">' + fmtDist(loc.dist) + '</div>';
       body.appendChild(el);
     });
   }
@@ -560,7 +560,7 @@ function renderList(body) {
     var pubVal = loc.public != null && loc.public !== '' ? parseInt(loc.public) : null;
     item.innerHTML =
       '<div class="list-main">' +
-        '<div class="list-addr-text" onclick="openInMaps(' + loc.lat + ',' + loc.lon + ',\'' + esc(loc.address||loc.name) + '\')" style="cursor:pointer;text-decoration:underline;text-decoration-color:rgba(255,255,255,.2);text-underline-offset:3px">' + esc(loc.name || loc.address) + '</div>' +
+        '<div class="list-addr-text" onclick="openInMaps(' + loc.lat + ',' + loc.lon + ',\'' + esc(loc.address||loc.name) + '\')" style="cursor:pointer">' + esc(loc.name || loc.address) + '</div>' +
         '<div class="list-right">' +
           (dist !== null ? '<div class="list-dist">' + fmtDist(dist) + '</div>' : '') +
           '<div class="tags-row">' +
