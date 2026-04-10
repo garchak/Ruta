@@ -1,4 +1,4 @@
-const CACHE = 'ruta-activa-v5';
+const CACHE = 'ruta-activa-v6';
 const ASSETS = [
   './',
   './index.html',

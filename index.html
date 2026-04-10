@@ -166,7 +166,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
     <div class="gps-row" style="margin-top:8px">
       <div class="gps-dot waiting" id="gps-dot"></div>
       <span id="gps-text">Solicitando GPS…</span>
-      <button id="gps-refresh" onclick="refreshGPS()" style="display:none;margin-left:auto;background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.25);color:var(--cyan);border-radius:6px;padding:2px 8px;font-size:10px;font-family:'JetBrains Mono',monospace;cursor:pointer;line-height:1.6">↻ actualizar</button>
+      <button id="gps-refresh" onclick="refreshGPS()" style="margin-left:auto;background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.25);color:var(--cyan);border-radius:6px;padding:2px 8px;font-size:10px;font-family:'JetBrains Mono',monospace;cursor:pointer;line-height:1.6">↻ actualizar</button>
     </div>
   </div>
   <div class="tabs">
@@ -291,7 +291,7 @@ function fetchGPSPosition() {
       lastUpdateTime = new Date();
       var timeStr = lastUpdateTime.getHours() + ':' + String(lastUpdateTime.getMinutes()).padStart(2,'0');
       setGPSStatus('active', pos.coords.latitude.toFixed(4) + ', ' + pos.coords.longitude.toFixed(4) + '  ' + timeStr);
-      document.getElementById('gps-refresh').style.display = '';
+      document.getElementById('gps-refresh').textContent = '↻ actualizar';
       renderBody();
     },
     function(err) {
@@ -823,13 +823,18 @@ function showSuggestions(data) {
   var box = document.getElementById('suggestions');
   box.innerHTML = '';
   data.forEach(function(item) {
-    var a = item.address||{};
-    var main = [a.road,a.house_number].filter(Boolean).join(' ') || item.display_name.split(',')[0];
-    var sub  = [a.city||a.town||a.village||a.municipality,a.county].filter(Boolean).join(', ');
+    var a = item.address || {};
+    // Build street with number: "road number" or fallback to display_name first part
+    var street = a.road || '';
+    var num    = a.house_number || '';
+    var main   = street ? (street + (num ? ' ' + num : '')) : item.display_name.split(',')[0];
+    var city   = a.city || a.town || a.village || a.municipality || '';
+    var sub    = [city, a.county].filter(Boolean).join(', ');
+    // Full label used in input field and sent to Maps
+    var label  = main + (city ? ', ' + city : '');
     var div = document.createElement('div');
     div.className = 'suggestion-item';
     div.innerHTML = '<div class="sug-main">'+esc(main)+'</div><div class="sug-sub">'+esc(sub)+'</div>';
-    var label = main + (sub ? ', '+sub : '');
     div.addEventListener('touchstart', function(e){e.preventDefault();selectSuggestion(item,label);});
     div.addEventListener('mousedown',  function(e){e.preventDefault();selectSuggestion(item,label);});
     box.appendChild(div);
